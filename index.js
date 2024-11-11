@@ -10,7 +10,7 @@ app.use(cors())
 // Configuracion del servidor
 const PORT = 8000
 app.listen(PORT, () => {
-    console.log(`Servidor backend activo en el puerto ${PORT}`)
+    console.log(`Servidor backend activo en el puerto ${PORT}\n`)
 })
 
 // Manejo y llamado de rutas

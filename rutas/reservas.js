@@ -13,19 +13,12 @@ router.post("/", async (req, res) => {
 
         for (const item of producto) {
             const { idproducto, cantidad } = item;
-            const resultado = await pool.query(
+            await pool.query(
                 `UPDATE inventario 
                 SET cantidadxlibra = CAST(cantidadxlibra AS integer) - $1 
                 WHERE idproducto = $2 AND CAST(cantidadxlibra AS integer) >= $1`,
                 [parseInt(cantidad, 10), idproducto]
             );
-
-            // Verificar si se actualizó el inventario
-            if (resultado.rowCount === 0) {
-                console.log('reserva exitosa');
-            } else {
-                console.log('reserva fracaso');
-            }
         }
 
         res.status(201).json(reserva.rows[0]);
