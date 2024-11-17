@@ -1,6 +1,7 @@
-const pool = require('../database')
-const router = require("express").Router()
-const jwt = require('jsonwebtoken')
+const router = require("express").Router();
+const pool = require('../database');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 router.post("/", async (req, res) => { 
     
@@ -13,8 +14,11 @@ router.post("/", async (req, res) => {
             return res.status(401).json({ message: 'Usuario no encontrado' });
         }
 
-        if (password !== user.rows[0].idempleado){
+        const passwordMatch = await bcrypt.compare(password, user.rows[0].contraseña);
+
+        if (!passwordMatch){
             console.log('Contraseña incorrecta para el usuario:', email);
+            return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
 
         const token = jwt.sign(user.rows[0], 'your-secret-key', { expiresIn: '1h' });
