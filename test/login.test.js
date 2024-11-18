@@ -3,11 +3,10 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Crear una aplicación Express para las pruebas
 const app = express();
 
 // Importar la ruta del login
-const loginRoute = require('../rutas/login.js');  // Asegúrate de que el path sea el correcto
+const loginRoute = require('../rutas/login.js');
 
 app.use(express.json());
 app.use('/login', loginRoute);

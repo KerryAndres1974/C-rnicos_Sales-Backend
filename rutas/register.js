@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
     const queryEmail = 'SELECT * FROM empleado WHERE correo = $1';
     const existeEmail = await pool.query(queryEmail, [correo]);
 
-    if (existeEmail.rows.lenght > 0) {
+    if (existeEmail.rows.length > 0) {
         return res.status(400).json({ message: 'El correo electrónico ya está en uso' });
     }
 
