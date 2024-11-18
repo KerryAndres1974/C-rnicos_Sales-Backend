@@ -1,0 +1,12 @@
+config:
+  target: 'http://localhost:8000'  # Host
+  phases:
+    - duration: 60  # Duración de la prueba en segundos
+      arrivalRate: 50  # Usuarios por segundo
+scenarios:
+  - flow:
+      - post:
+          url: '/login'
+          json:
+            email: 'usuario@example.com'
+            password: 'contraseña'
