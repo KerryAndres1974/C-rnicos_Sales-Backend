@@ -12,12 +12,12 @@ router.post("/", async (req, res) => {
         const reserva = await pool.query(query, [id, nombreempleado, totalventa, fecha, JSON.stringify(producto)]);
 
         for (const item of producto) {
-            const { id, cantidad } = item;
+            const { nombre, cantidad } = item;
             await pool.query(
                 `UPDATE inventario 
-                SET cantidadxlibra = CAST(cantidadxlibra AS integer) - $1 
-                WHERE idproducto = $2 AND CAST(cantidadxlibra AS integer) >= $1`,
-                [cantidad, parseInt(id, 10)]
+                SET cantidadxlibra = cantidadxlibra - $1 
+                WHERE nombreproducto = $2 AND cantidadxlibra >= $1`,
+                [cantidad, nombre]
             );
         }
 

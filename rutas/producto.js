@@ -6,7 +6,7 @@ router.get('/:idproducto', async (req, res) => {
     const id = req.params.idproducto
   
     try {
-        const query = `SELECT * FROM inventario WHERE idproducto = $1`
+        const query = `SELECT * FROM inventario WHERE idproducto = $1 AND activo = true`
         const result = await pool.query(query, [id])
     
         if (result.rows.length === 0) {

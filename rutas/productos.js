@@ -6,7 +6,7 @@ router.post("/", async (req, res) => {
 
     try {
         // Construir la consulta SQL con condiciones opcionales
-        let query = 'SELECT * FROM inventario';
+        let query = 'SELECT * FROM inventario WHERE activo = true AND cantidadxlibra > 0';
         const conditions = [];
         const values = [];
 
@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
 
         // Si existen condiciones, agregarlas a la consulta SQL
         if (conditions.length > 0) {
-            query += ` WHERE ${conditions.join(' AND ')}`;
+            query += ` AND ${conditions.join(' AND ')}`;
         }
 
         // Ejecutar la consulta con los valores

@@ -3,7 +3,6 @@ const pool = require('../database');
 
 router.post("/", async (req, res) => {
     const { reserva, cliente } = req.body;
-    console.log(reserva, '\n', cliente);
     const { id, fecha, producto, valor } = reserva;
     const { cor, nom, dir, tel } = cliente;
     
@@ -31,19 +30,20 @@ router.post("/", async (req, res) => {
         }
 
         // Inserta reserva
-        const queryReserva = `INSERT INTO reservas (idreserva, fecha, productos, valor, idcliente)
+        const queryReserva = `
+            INSERT INTO reservas (idreserva, fecha, productos, valor, idcliente)
             VALUES ($1, $2, $3::json, $4, $5) RETURNING *`;
 
         const reserva = await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
 
         // Actualiza el inventario
         for (const item of producto) {
-            const { idproducto, cantidad } = item;
+            const { nombre, cantidad } = item;
             await pool.query(
                 `UPDATE inventario 
-                SET cantidadxlibra = CAST(cantidadxlibra AS integer) - $1 
-                WHERE idproducto = $2 AND CAST(cantidadxlibra AS integer) >= $1`,
-                [parseInt(cantidad, 10), idproducto]
+                SET cantidadxlibra = cantidadxlibra - $1 
+                WHERE nombreproducto = $2 AND cantidadxlibra >= $1`,
+                [parseInt(cantidad, 10), nombre]
             );
         }
 

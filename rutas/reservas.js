@@ -5,7 +5,7 @@ router.get("/", async (req, res) => {
   
     try {
         // Consulta SQL para obtener las reservas
-        const query = 'SELECT * FROM reservas';
+        const query = `SELECT * FROM reservas WHERE estado = 'pendiente'`;
             
         // Ejecutar la consutla
         const reservas = await pool.query(query);
