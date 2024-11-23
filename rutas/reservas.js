@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
         // Inserta reserva
         const queryReserva = `
             INSERT INTO reservas (idreserva, fecha, productos, valor, idcliente)
-            VALUES ($1, $2, $3::json, $4, $5) RETURNING *`;
+            VALUES ($1, $2, $3::json, $4, $5)`;
 
         await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
 
