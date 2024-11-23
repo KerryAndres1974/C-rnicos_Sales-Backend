@@ -16,7 +16,6 @@ app.use('/productos', require('./rutas/productos'));
 app.use('/reservas', require('./rutas/reservas'));
 app.use('/ventas', require('./rutas/ventas'));
 
-
 // Exportar app para pruebas
 module.exports = app;
 
