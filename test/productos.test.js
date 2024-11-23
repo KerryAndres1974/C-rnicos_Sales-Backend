@@ -33,7 +33,7 @@ describe('Productos - Tiempo de ejecucion', () => {
         const inicio = Date.now();
         
         const response = await request(index).post('/productos')
-        .send(productos);
+            .send(productos);
 
         const fin = Date.now();
         const tiempo_de_ejecucion = fin -inicio;

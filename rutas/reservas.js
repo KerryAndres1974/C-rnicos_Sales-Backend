@@ -1,25 +1,5 @@
-const router = require("express").Router()
-const pool = require('../database')
-
-// Obtener todas las reservas pendientes
-router.get("/", async (req, res) => {
-  
-    try {
-        // Consulta SQL para obtener las reservas
-        const query = `SELECT * FROM reservas WHERE estado = 'pendiente'`;
-            
-        // Ejecutar la consutla
-        const reservas = await pool.query(query);
-    
-        // Envía la respuesta con las reservas encontrados
-        res.json(reservas.rows);
-    
-    } catch (error) {
-        console.error('Error al obtener las reservas:', error);
-        res.status(500).json({ error: 'Error al obtener reservas' });
-    }
-  
-});
+const router = require("express").Router();
+const pool = require('../database');
 
 // Crear una nueva reserva
 router.post("/", async (req, res) => {
@@ -43,10 +23,10 @@ router.post("/", async (req, res) => {
             idcliente = cliente.rows[0]?.id;
         } else {
             // Inserta al nuevo cliente
-            const queryCliente = `INSERT INTO clientedom (correo, nombre, direccion, telefono)
+            const queryCliente = `INSERT INTO clientedom (nombre, direccion, telefono, correo)
                 VALUES ($1, $2, $3, $4) RETURNING id`;
 
-            const cliente = await pool.query(queryCliente, [cor, nom, dir, tel]);
+            const cliente = await pool.query(queryCliente, [nom, dir, tel, cor]);
             idcliente = cliente.rows[0]?.id;
         }
 
@@ -55,7 +35,7 @@ router.post("/", async (req, res) => {
             INSERT INTO reservas (idreserva, fecha, productos, valor, idcliente)
             VALUES ($1, $2, $3::json, $4, $5) RETURNING *`;
 
-        const reserva = await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
+        await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
 
         // Actualiza el inventario
         for (const item of producto) {
@@ -68,7 +48,7 @@ router.post("/", async (req, res) => {
             );
         }
 
-        res.status(201).json({ cliente: idcliente, reserva: reserva.rows[0] });
+        res.status(200).json({ message: 'Reserva añadida con exito' });
 
     } catch (error) {
         console.error('Error al procesar la solicitud:', error);
@@ -76,7 +56,27 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Actualizar una reserva existente
+// Obtener todas las reservas pendientes
+router.get("/", async (req, res) => {
+  
+    try {
+        // Consulta SQL para obtener las reservas
+        const query = `SELECT * FROM reservas WHERE estado = 'pendiente'`;
+            
+        // Ejecutar la consutla
+        const reservas = await pool.query(query);
+    
+        // Envía la respuesta con las reservas encontrados
+        res.json(reservas.rows);
+    
+    } catch (error) {
+        console.error('Error al obtener las reservas:', error);
+        res.status(500).json({ error: 'Error al obtener reservas' });
+    }
+  
+});
+
+// Actualizar estado de una reserva existente
 router.put('/:idreserva', async (req, res) => {
 
     const id = req.params.idreserva;
