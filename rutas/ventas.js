@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const pool = require('../database');
 
+// Crear una nueva venta
 router.post("/", async (req, res) => {
     const { id, nombreempleado, totalventa, fecha, producto } = req.body;
     
