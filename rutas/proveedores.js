@@ -7,8 +7,8 @@ router.post("/", async (req, res) => {
   
     try {
 
-        const query = `INSERT INTO proveedor (idproveedor, numerotelefono,
-        direccion, nombreproveedor, tipoproducto) values ($1, $2, $3, $4, $5)`;
+        const query = `INSERT INTO proveedor (idproveedor, telefono,
+        direccion, nombre, tipoproducto) values ($1, $2, $3, $4, $5)`;
 
         const provider = await pool.query(query, [nit, telefono, direccion, nombre, tipo]);
   

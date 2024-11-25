@@ -8,9 +8,9 @@ router.post("/", async (req, res) => {
     try {
 
         const query = `INSERT INTO ventas (idventa, nombreempleado, totalventa, fecha, producto)
-            VALUES ($1, $2, $3, $4, $5::json) RETURNING *`;
+            VALUES ($1, $2, $3, $4, $5::json)`;
 
-        const reserva = await pool.query(query, [id, nombreempleado, totalventa, fecha, JSON.stringify(producto)]);
+        await pool.query(query, [id, nombreempleado, totalventa, fecha, JSON.stringify(producto)]);
 
         for (const item of producto) {
             const { nombre, cantidad } = item;
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
             );
         }
 
-        res.status(201).json(reserva.rows[0]);
+        res.status(200).json({ message: 'Venta añadida con exito' });
 
     } catch (error) {
         console.error('Error al guardar venta:', error);
