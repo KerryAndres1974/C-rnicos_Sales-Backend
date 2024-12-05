@@ -3,15 +3,17 @@ const pool = require('../database');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+// Ingresar 
 router.post("/", async (req, res) => { 
     
     const { email, password } = req.body;
 
     try {
-        const user = await pool.query('SELECT * FROM empleado WHERE cargo = $1 OR nombre = $1', [email]);
+        const query = 'SELECT * FROM empleado WHERE nombre = $1 AND contrato = true';
+        const user = await pool.query(query, [email]);
 
         if (user.rows.length === 0) {
-            return res.status(401).json({ message: 'Usuario no encontrado' });
+            return res.status(400).json({ message: 'Usuario no contratado' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.rows[0].contraseña);

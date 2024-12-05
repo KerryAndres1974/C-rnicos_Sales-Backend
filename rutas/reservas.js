@@ -2,7 +2,7 @@ const router = require("express").Router();
 const pool = require('../database');
 
 // Crear una nueva reserva
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
     const { reserva, cliente } = req.body;
     const { id, fecha, producto, valor } = reserva;
     const { cor, nom, dir, tel } = cliente;
@@ -32,19 +32,19 @@ router.post("/", async (req, res) => {
 
         // Inserta reserva
         const queryReserva = `
-            INSERT INTO reservas (idreserva, fecha, productos, valor, idcliente)
+            INSERT INTO reserva (idreserva, fecha, producto, valor, idcliente)
             VALUES ($1, $2, $3::json, $4, $5)`;
 
         await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
 
         // Actualiza el inventario
         for (const item of producto) {
-            const { nombre, cantidad } = item;
+            const { idp, cantidad } = item;
             await pool.query(
                 `UPDATE inventario 
                 SET cantidadxlibra = cantidadxlibra - $1 
-                WHERE nombreproducto = $2 AND cantidadxlibra >= $1`,
-                [parseInt(cantidad, 10), nombre]
+                WHERE idproducto = $2 AND cantidadxlibra >= $1`,
+                [cantidad, idp]
             );
         }
 
@@ -57,11 +57,11 @@ router.post("/", async (req, res) => {
 });
 
 // Obtener todas las reservas pendientes
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   
     try {
         // Consulta SQL para obtener las reservas
-        const query = `SELECT * FROM reservas WHERE estado = 'pendiente'`;
+        const query = `SELECT * FROM reserva WHERE estado = 'pendiente'`;
             
         // Ejecutar la consutla
         const reservas = await pool.query(query);
@@ -82,7 +82,7 @@ router.put('/:idreserva', async (req, res) => {
     const id = req.params.idreserva;
   
     try {
-        const query = `UPDATE reservas 
+        const query = `UPDATE reserva 
             SET estado = 'completo' WHERE idreserva = $1`;
         const result = await pool.query(query, [id]);
     

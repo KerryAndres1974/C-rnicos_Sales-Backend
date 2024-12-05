@@ -2,8 +2,7 @@ const router = require("express").Router();
 const pool = require('../database');
 
 // Crear un nuevo producto
-router.post("/", async (req, res) => {
-
+router.post('/', async (req, res) => {
     const productos = req.body;
   
     const fechac = new Date();
@@ -38,11 +37,15 @@ router.post("/", async (req, res) => {
 });
 
 // Obtener todos los productos disponibles
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
 
     try {
         // Consulta SQL para obtener los productos
-        const query = 'SELECT * FROM inventario WHERE activo = true AND cantidadxlibra > 0';
+        const query = `SELECT i.*, p.telefono FROM inventario i 
+            INNER JOIN proveedor p
+            ON p.idproveedor = i.idproveedor
+            WHERE activo = true AND cantidadxlibra > 0
+            ORDER BY promocion DESC`;
         
         // Ejecutar la consulta
         const productos = await pool.query(query);
@@ -55,6 +58,37 @@ router.get("/", async (req, res) => {
         res.status(500).json({ error: 'Error al obtener productos' });
     }
 });
+
+// Obtener productos vendidos
+router.get('/vendidos', async (req, res) => {
+
+    try {
+        const query = `
+            SELECT 
+                producto->>'id' AS id,
+                producto->>'nombre' AS nombre,
+                producto->>'cantidad' AS cantidad,
+                i.preciocompra,
+                i.precioxlibra
+            FROM (
+                SELECT 
+                    json_array_elements(venta.producto::json) AS producto
+                FROM venta
+                UNION ALL
+                SELECT 
+                    json_array_elements(reserva.producto::json) AS producto 
+                FROM reserva WHERE estado = 'completo'
+            ) AS productos_vendidos
+            JOIN inventario i ON (producto->>'id')::int = i.idproducto`;
+
+        const vendidos = await pool.query(query);
+
+        res.json(vendidos.rows);
+    } catch (err) {
+        console.error('Error al obtener productos:', err);
+        res.status(500).json({ error: 'Error al obtener productos' });
+    }
+})
 
 // Obtener un producto especifico
 router.get('/:idproducto', async (req, res) => {
@@ -73,7 +107,7 @@ router.get('/:idproducto', async (req, res) => {
   
     } catch (error) {
         console.error('Error al obtener el producto:', error);
-        res.status(500).json({ error: 'Error al obtener el producto', details: error.message });
+        res.status(500).json({ error: 'Error al obtener el producto' });
     }
 });
 

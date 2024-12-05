@@ -9,7 +9,7 @@ app.use(cors())
 
 // Manejo y llamado de rutas
 app.use('/login', require('./rutas/login'));
-app.use('/register', require('./rutas/register'));
+app.use('/empleados', require('./rutas/empleados'));
 
 app.use('/proveedores', require('./rutas/proveedores'));
 app.use('/productos', require('./rutas/productos'));
