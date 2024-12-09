@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
   
     try {
         // Consulta SQL para obtener los proveedores
-        const query = 'SELECT * FROM proveedor';
+        const query = 'SELECT * FROM proveedor WHERE activo = true';
             
         // Ejecutar la consutla
         const proveedores = await pool.query(query);
