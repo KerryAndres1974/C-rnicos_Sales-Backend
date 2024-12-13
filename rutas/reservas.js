@@ -3,7 +3,7 @@ const pool = require('../database');
 
 // Crear una nueva reserva
 router.post('/', async (req, res) => {
-    const { reserva, cliente } = req.body;
+    const { reserva, cliente, domicilio } = req.body;
     const { id, fecha, producto, valor } = reserva;
     const { cor, nom, dir, tel } = cliente;
     
@@ -32,10 +32,10 @@ router.post('/', async (req, res) => {
 
         // Inserta reserva
         const queryReserva = `
-            INSERT INTO reserva (idreserva, fecha, producto, valor, idcliente)
-            VALUES ($1, $2, $3::json, $4, $5)`;
+            INSERT INTO reserva (idreserva, fecha, producto, valor, idcliente, domicilio)
+            VALUES ($1, $2, $3::json, $4, $5, $6)`;
 
-        await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente]);
+        await pool.query(queryReserva, [id, fecha, JSON.stringify(producto), valor, idcliente, domicilio]);
 
         // Actualiza el inventario
         for (const item of producto) {
@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
   
     try {
         // Consulta SQL para obtener las reservas
-        const query = `SELECT * FROM reserva WHERE estado = 'pendiente'`;
+        const query = `SELECT * FROM reserva WHERE estado = 'pendiente' ORDER BY domicilio DESC`;
             
         // Ejecutar la consutla
         const reservas = await pool.query(query);

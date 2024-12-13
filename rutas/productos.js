@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
         const query = `SELECT i.*, p.telefono FROM inventario i 
             INNER JOIN proveedor p
             ON p.idproveedor = i.idproveedor
-            WHERE activo = true AND cantidadxlibra > 0
+            WHERE i.activo = true AND cantidadxlibra > 0
             ORDER BY promocion DESC`;
         
         // Ejecutar la consulta
